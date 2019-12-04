@@ -1,0 +1,113 @@
+<?
+
+	/*
+		Import class "cdo: Chartist Data Object" and create instance
+		Read data to be displayed in line chart from database or alike
+	*/
+	
+	$input_data['xaxis']	=	$your_array_of_dates
+	$input_data['yaxis']	=	$your_array_of_productprices
+		
+	$axis_types['xaxis']	=	"days";
+	$axis_types['yaxis']	=	"prices";
+		
+	$axis_titles['xaxis']	=	"Date";
+	$axis_titles['yaxis']	=	"Price in EUR";
+		
+	$cdo 									= new cdo($input_data, $axis_types, $axis_titles);
+	$labels								=	$cdo->getLabels();
+	$series								=	$cdo->getSeries();
+		
+?>
+
+<!doctype html>
+<html lang="en">
+
+<head>
+
+	<!-- html header definition goes here -->
+	
+	<!-- Chartist.js: Assumed to be stored in ../chartist/ -->
+	<link rel="stylesheet" href="chartist/chartist.min.css">
+	<script src="chartist/chartist.min.js"></script>
+	<link rel="stylesheet" href="chartist/chartist-plugin-tooltip.css">
+  <script src="chartist/chartist-plugin-tooltip.min.js"></script>
+  <script src="chartist/chartist-plugin-axistitle.js"></script>
+  <script src="chartist/chartist-plugin-pointlabels.js"></script>
+
+</head>
+
+<body>
+
+	<!-- own html code and alike goes here -->
+	
+	<div class="ct-chart ct-golden-section" id="chartist1">
+	</div>
+	
+	<script>
+		function loadChart()
+		{
+		  var data =
+		  {
+				labels: <?=$labels['data'];?>,
+			  series: [
+					 				<?=$series['data'];?>
+								]
+			};
+									  
+			var options =
+			{
+			 	low: <?=$series['minimum'];?>,
+			 	high: <?=$series['maximum'];?>,
+		  	height: 400,
+		  	fullWidth: true,
+			 	chartPadding:
+			 	{
+			 		left: 25,
+					right: 20
+				},
+				axisY:
+				{
+					offset: 20
+		  	},
+		  	plugins:
+		  	[
+		  		Chartist.plugins.tooltip(),
+		  		Chartist.plugins.ctPointLabels(
+		  		{
+			      textAnchor: 'middle'
+			    }),
+		  		Chartist.plugins.ctAxisTitle(
+		  		{
+			      axisX:
+			      {
+			        axisTitle: '<?=$axis_titles["xaxis"];?>',
+			        axisClass: 'ct-axis-title',
+			        offset:
+			        {
+			          x: 0,
+			          y: 35
+			        },
+			        textAnchor: 'middle'
+			      },
+			      axisY:
+			      {
+			        axisTitle: '<?=$axis_titles["yaxis"];?>',
+				      axisClass: 'ct-axis-title',
+				      offset:
+				      {
+				        x: 5,
+				        y: 0
+				      },
+				      textAnchor: 'middle',
+				      flipTitle: false
+				    }
+				  })
+		  	]
+			};
+									  
+			 new Chartist.Line('#chartist1', data, options);
+		}
+	</script>
+	
+</body>
